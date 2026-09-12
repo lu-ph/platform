@@ -37,7 +37,9 @@ export default function AdminFileViewPage() {
 
   const pageRefs = useRef<(HTMLDivElement | null)[]>([])
   const currentPageRef = useRef(currentPage)
-  const pageSwitchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pageSwitchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  )
 
   useEffect(() => {
     async function load() {
@@ -51,7 +53,7 @@ export default function AdminFileViewPage() {
           texts[p.pageNumber] = p.uploads.text || ""
           imgs[p.pageNumber] = p.uploads.images.map(
             (name: string) =>
-              `/api/files/${fileid}/pages/${p.pageNumber}/image/${name}`
+              `/api/files/${fileid}/pages/${p.pageNumber}/image/${name}`,
           )
         }
         setPageTexts(texts)
@@ -77,7 +79,7 @@ export default function AdminFileViewPage() {
           if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
             const pageNum = parseInt(
               entry.target.getAttribute("data-page") || "1",
-              10
+              10,
             )
             maxRatio = entry.intersectionRatio
             visiblePage = pageNum
@@ -96,7 +98,7 @@ export default function AdminFileViewPage() {
       {
         threshold: [0.1, 0.3, 0.5, 0.7, 0.9],
         rootMargin: "-60px 0px -60px 0px",
-      }
+      },
     )
 
     pageRefs.current.forEach((ref) => {
@@ -106,14 +108,11 @@ export default function AdminFileViewPage() {
     return () => observer.disconnect()
   }, [numPages])
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setLightboxImage(null)
-      }
-    },
-    []
-  )
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setLightboxImage(null)
+    }
+  }, [])
 
   useEffect(() => {
     if (lightboxImage) {
@@ -143,33 +142,29 @@ export default function AdminFileViewPage() {
           loading={
             <p className="text-[#9C9589] text-center mt-20">加载 PDF...</p>
           }
-          error={
-            <p className="text-red-500 text-center mt-20">PDF 加载失败</p>
-          }
+          error={<p className="text-red-500 text-center mt-20">PDF 加载失败</p>}
         >
           {pdfLoaded &&
-            Array.from({ length: numPages }, (_, i) => i + 1).map(
-              (pageNum) => (
-                <div
-                  key={pageNum}
-                  ref={(el) => {
-                    pageRefs.current[pageNum - 1] = el
-                  }}
-                  data-page={pageNum}
-                  className="mb-4 flex justify-center"
-                >
-                  <Page
-                    pageNumber={pageNum}
-                    width={600}
-                    renderTextLayer
-                    renderAnnotationLayer
-                    loading={
-                      <div className="w-[600px] h-[400px] bg-[#EFECE6] rounded-md" />
-                    }
-                  />
-                </div>
-              )
-            )}
+            Array.from({ length: numPages }, (_, i) => i + 1).map((pageNum) => (
+              <div
+                key={pageNum}
+                ref={(el) => {
+                  pageRefs.current[pageNum - 1] = el
+                }}
+                data-page={pageNum}
+                className="mb-4 flex justify-center"
+              >
+                <Page
+                  pageNumber={pageNum}
+                  width={600}
+                  renderTextLayer
+                  renderAnnotationLayer
+                  loading={
+                    <div className="w-[600px] h-[400px] bg-[#EFECE6] rounded-md" />
+                  }
+                />
+              </div>
+            ))}
         </Document>
       </div>
 

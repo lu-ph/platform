@@ -36,7 +36,9 @@ export default function FileViewPage() {
   const [numPages, setNumPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({})
-  const [pageImages, setPageImages] = useState<Record<number, PreviewImage[]>>({})
+  const [pageImages, setPageImages] = useState<Record<number, PreviewImage[]>>(
+    {},
+  )
   const [saving, setSaving] = useState(false)
   const [pdfLoaded, setPdfLoaded] = useState(false)
   const [lightboxImage, setLightboxImage] = useState<string | null>(null)
@@ -44,7 +46,9 @@ export default function FileViewPage() {
   const pageRefs = useRef<(HTMLDivElement | null)[]>([])
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const currentPageRef = useRef(currentPage)
-  const pageSwitchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pageSwitchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  )
 
   const loadFileInfo = useCallback(async () => {
     const res = await fetch(`/api/files/${fileid}`)
@@ -70,14 +74,11 @@ export default function FileViewPage() {
     loadFileInfo()
   }, [loadFileInfo])
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setLightboxImage(null)
-      }
-    },
-    []
-  )
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setLightboxImage(null)
+    }
+  }, [])
 
   useEffect(() => {
     if (lightboxImage) {
@@ -102,7 +103,7 @@ export default function FileViewPage() {
           if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
             const pageNum = parseInt(
               entry.target.getAttribute("data-page") || "1",
-              10
+              10,
             )
             maxRatio = entry.intersectionRatio
             visiblePage = pageNum
@@ -121,7 +122,7 @@ export default function FileViewPage() {
       {
         threshold: [0.1, 0.3, 0.5, 0.7, 0.9],
         rootMargin: "-60px 0px -60px 0px",
-      }
+      },
     )
 
     pageRefs.current.forEach((ref) => {
@@ -167,7 +168,7 @@ export default function FileViewPage() {
     (value: string) => {
       setPageTexts((prev) => ({ ...prev, [currentPage]: value }))
     },
-    [currentPage]
+    [currentPage],
   )
 
   const handleImageUpload = useCallback(
@@ -190,16 +191,16 @@ export default function FileViewPage() {
         formData.append("text", text)
       }
       try {
-        await fetch(
-          `/api/files/${fileid}/pages/${currentPage}/upload`,
-          { method: "POST", body: formData }
-        )
+        await fetch(`/api/files/${fileid}/pages/${currentPage}/upload`, {
+          method: "POST",
+          body: formData,
+        })
         await loadFileInfo()
       } catch (err) {
         console.error("Upload failed", err)
       }
     },
-    [currentPage, fileid, loadFileInfo, pageTexts]
+    [currentPage, fileid, loadFileInfo, pageTexts],
   )
 
   const pasteRef = useRef<HTMLTextAreaElement>(null)
@@ -234,10 +235,10 @@ export default function FileViewPage() {
         formData.append("text", text)
       }
       try {
-        await fetch(
-          `/api/files/${fileid}/pages/${currentPage}/upload`,
-          { method: "POST", body: formData }
-        )
+        await fetch(`/api/files/${fileid}/pages/${currentPage}/upload`, {
+          method: "POST",
+          body: formData,
+        })
         await loadFileInfo()
       } catch (err) {
         console.error("Upload failed", err)
@@ -247,7 +248,7 @@ export default function FileViewPage() {
         pasteRef.current.value = ""
       }
     },
-    [currentPage, fileid, loadFileInfo, pageTexts]
+    [currentPage, fileid, loadFileInfo, pageTexts],
   )
 
   if (!fileInfo) {
@@ -271,33 +272,29 @@ export default function FileViewPage() {
           loading={
             <p className="text-[#9C9589] text-center mt-20">加载 PDF...</p>
           }
-          error={
-            <p className="text-red-500 text-center mt-20">PDF 加载失败</p>
-          }
+          error={<p className="text-red-500 text-center mt-20">PDF 加载失败</p>}
         >
           {pdfLoaded &&
-            Array.from({ length: numPages }, (_, i) => i + 1).map(
-              (pageNum) => (
-                <div
-                  key={pageNum}
-                  ref={(el) => {
-                    pageRefs.current[pageNum - 1] = el
-                  }}
-                  data-page={pageNum}
-                  className="mb-4 flex justify-center"
-                >
-                  <Page
-                    pageNumber={pageNum}
-                    width={600}
-                    renderTextLayer
-                    renderAnnotationLayer
-                    loading={
-                      <div className="w-[600px] h-[400px] bg-[#EFECE6] rounded-md" />
-                    }
-                  />
-                </div>
-              )
-            )}
+            Array.from({ length: numPages }, (_, i) => i + 1).map((pageNum) => (
+              <div
+                key={pageNum}
+                ref={(el) => {
+                  pageRefs.current[pageNum - 1] = el
+                }}
+                data-page={pageNum}
+                className="mb-4 flex justify-center"
+              >
+                <Page
+                  pageNumber={pageNum}
+                  width={600}
+                  renderTextLayer
+                  renderAnnotationLayer
+                  loading={
+                    <div className="w-[600px] h-[400px] bg-[#EFECE6] rounded-md" />
+                  }
+                />
+              </div>
+            ))}
         </Document>
       </div>
 

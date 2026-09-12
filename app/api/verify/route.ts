@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server'
-import { getFileData } from '@/lib/file'
+import { NextResponse } from "next/server"
+import { getFileData } from "@/lib/file"
 
 export async function POST(request: Request) {
   const { fileid, password } = await request.json()
 
   if (!fileid) {
-    return NextResponse.json({ error: 'Missing fileid' }, { status: 400 })
+    return NextResponse.json({ error: "Missing fileid" }, { status: 400 })
   }
 
   // Password validation logic kept, but temporarily disabled
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
 
   const data = getFileData(fileid)
   if (!data) {
-    return NextResponse.json({ error: 'File not found' }, { status: 404 })
+    return NextResponse.json({ error: "File not found" }, { status: 404 })
   }
 
   return NextResponse.json({

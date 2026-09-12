@@ -5,8 +5,8 @@ import { headers } from "next/headers"
 import { signAdminToken } from "@/lib/auth"
 
 export async function loginAction(formData: FormData): Promise<{
-	success: boolean;
-	error?: string;
+  success: boolean
+  error?: string
 }> {
   const userName = formData.get("username")
   const password = formData.get("password")

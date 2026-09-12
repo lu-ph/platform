@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 interface UploadedFile {
   fileid: string
@@ -25,7 +25,7 @@ export default function AdminPage() {
   }, [])
 
   async function loadFiles() {
-    const res = await fetch('/api/files')
+    const res = await fetch("/api/files")
     if (res.ok) {
       const data = await res.json()
       setFiles(data.files || [])
@@ -40,11 +40,11 @@ export default function AdminPage() {
     setResult(null)
 
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append("file", file)
 
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
+      const res = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
       })
 
@@ -53,22 +53,22 @@ export default function AdminPage() {
         setResult(data)
         loadFiles()
       } else {
-        alert(data.error || '上传失败')
+        alert(data.error || "上传失败")
       }
     } catch {
-      alert('上传失败')
+      alert("上传失败")
     } finally {
       setUploading(false)
     }
   }
 
   async function handleLogout() {
-    await fetch('/api/logout', { method: 'POST' })
-    router.push('/login')
+    await fetch("/api/logout", { method: "POST" })
+    router.push("/login")
   }
 
   function buildShareLink(fileid: string) {
-    if (typeof window === 'undefined') return `/file/${fileid}`
+    if (typeof window === "undefined") return `/file/${fileid}`
     return `${window.location.origin}/file/${fileid}`
   }
 
@@ -79,7 +79,7 @@ export default function AdminPage() {
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     } catch {
-      alert('复制失败')
+      alert("复制失败")
     }
   }
 
@@ -97,13 +97,15 @@ export default function AdminPage() {
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-[#EFECE6] mb-8">
-          <h2 className="text-sm font-medium text-[#7C7569] mb-4">上传新文件</h2>
+          <h2 className="text-sm font-medium text-[#7C7569] mb-4">
+            上传新文件
+          </h2>
           <form onSubmit={handleUpload} className="space-y-4">
             <div className="border-2 border-dashed border-[#E5E1D8] rounded-lg p-6 text-center hover:border-[#C4B7A6] transition bg-[#FDFBF7]">
               <input
                 type="file"
                 accept=".pdf"
-                onChange={e => setFile(e.target.files?.[0] || null)}
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
                 required
                 className="text-xs text-[#7C7569] file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:bg-[#5C5549] file:text-white hover:file:bg-[#4A443A]"
               />
@@ -113,34 +115,57 @@ export default function AdminPage() {
               disabled={uploading || !file}
               className="w-full bg-[#5C5549] text-white py-2 rounded-md hover:bg-[#4A443A] transition text-sm disabled:opacity-50"
             >
-              {uploading ? '上传中...' : '开始上传'}
+              {uploading ? "上传中..." : "开始上传"}
             </button>
           </form>
 
           {result && (
             <div className="mt-4 p-4 bg-[#FDFBF7] rounded-md border border-[#E5E1D8]">
-              <p className="text-xs text-[#5C5549] font-medium mb-2">上传成功</p>
-              <p className="text-xs text-[#7C7569]">文件编号: <span className="font-mono text-[#5C5549]">{result.fileid}</span></p>
-              <p className="text-xs text-[#7C7569]">访问密码: <span className="font-mono text-[#5C5549]">{result.password}</span></p>
+              <p className="text-xs text-[#5C5549] font-medium mb-2">
+                上传成功
+              </p>
+              <p className="text-xs text-[#7C7569]">
+                文件编号:{" "}
+                <span className="font-mono text-[#5C5549]">
+                  {result.fileid}
+                </span>
+              </p>
+              <p className="text-xs text-[#7C7569]">
+                访问密码:{" "}
+                <span className="font-mono text-[#5C5549]">
+                  {result.password}
+                </span>
+              </p>
               <p className="text-xs text-[#7C7569]">页数: {result.pageCount}</p>
             </div>
           )}
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-sm border border-[#EFECE6]">
-          <h2 className="text-sm font-medium text-[#7C7569] mb-4">已上传文件</h2>
+          <h2 className="text-sm font-medium text-[#7C7569] mb-4">
+            已上传文件
+          </h2>
           {files.length === 0 ? (
             <p className="text-xs text-[#9C9589]">暂无文件</p>
           ) : (
             <div className="space-y-2">
-              {files.map(f => (
-                <div key={f.fileid} className="flex justify-between items-center p-3 bg-[#FDFBF7] rounded-md border border-[#E5E1D8]">
+              {files.map((f) => (
+                <div
+                  key={f.fileid}
+                  className="flex justify-between items-center p-3 bg-[#FDFBF7] rounded-md border border-[#E5E1D8]"
+                >
                   <div className="min-w-0">
-                    <p className="text-xs text-[#5C5549] font-medium truncate">{f.pdfName}</p>
-                    <p className="text-xs text-[#9C9589] font-mono">{f.fileid}</p>
+                    <p className="text-xs text-[#5C5549] font-medium truncate">
+                      {f.pdfName}
+                    </p>
+                    <p className="text-xs text-[#9C9589] font-mono">
+                      {f.fileid}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0 ml-3">
-                    <span className="text-xs text-[#9C9589]">{f.pageCount} 页</span>
+                    <span className="text-xs text-[#9C9589]">
+                      {f.pageCount} 页
+                    </span>
                     <button
                       onClick={() => setShareFile(f)}
                       className="text-xs text-[#5C5549] hover:text-[#4A443A] underline"
@@ -158,11 +183,13 @@ export default function AdminPage() {
                     <button
                       onClick={async () => {
                         if (!confirm(`确定要删除 ${f.fileid} 吗？`)) return
-                        const res = await fetch(`/api/files/${f.fileid}`, { method: 'DELETE' })
+                        const res = await fetch(`/api/files/${f.fileid}`, {
+                          method: "DELETE",
+                        })
                         if (res.ok) {
                           loadFiles()
                         } else {
-                          alert('删除失败')
+                          alert("删除失败")
                         }
                       }}
                       className="text-xs text-red-500 hover:text-red-700 transition"
@@ -198,7 +225,9 @@ export default function AdminPage() {
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-[#7C7569] mb-1">访客链接</label>
+                <label className="block text-xs font-medium text-[#7C7569] mb-1">
+                  访客链接
+                </label>
                 <div className="flex items-center gap-2">
                   <input
                     readOnly
@@ -209,13 +238,15 @@ export default function AdminPage() {
                     onClick={() => copyLink(shareFile.fileid)}
                     className="shrink-0 px-3 py-1.5 bg-[#5C5549] text-white rounded-md hover:bg-[#4A443A] transition text-xs"
                   >
-                    {copied ? '已复制' : '复制'}
+                    {copied ? "已复制" : "复制"}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#7C7569] mb-1">访问密码</label>
+                <label className="block text-xs font-medium text-[#7C7569] mb-1">
+                  访问密码
+                </label>
                 <input
                   readOnly
                   value={shareFile.password}

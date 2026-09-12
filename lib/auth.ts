@@ -1,11 +1,11 @@
-import { SignJWT, jwtVerify } from 'jose'
+import { SignJWT, jwtVerify } from "jose"
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export async function signAdminToken() {
-  return await new SignJWT({ role: 'admin' })
-    .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime('7d')
+  return await new SignJWT({ role: "admin" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("7d")
     .sign(SECRET)
 }
 
