@@ -1,6 +1,7 @@
 "use server"
 
 import { cookies } from "next/headers"
+import { headers } from "next/headers"
 import { signAdminToken } from "@/lib/auth"
 
 export async function loginAction(formData: FormData): Promise<{
@@ -17,9 +18,15 @@ export async function loginAction(formData: FormData): Promise<{
     const token = await signAdminToken()
 
     const cookieStore = await cookies()
+    const requestHeaders = await headers()
+    const forwardedProtocol = requestHeaders.get("x-forwarded-proto")
+    const isSecureRequest = forwardedProtocol
+      ? forwardedProtocol.split(",")[0].trim() === "https"
+      : false
+
     cookieStore.set("admin_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isSecureRequest,
       sameSite: "strict",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
